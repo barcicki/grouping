@@ -1,7 +1,5 @@
-const _ = require('lodash');
-
 function canPair(items) {
-    return _.every(items, _.isString);
+    return items.every(item => typeof item === 'string');
 }
 
 function pair(items) {
@@ -9,19 +7,20 @@ function pair(items) {
         throw new Error(`Can't make pairs using odd number of players`);
     }
 
-    return _(items)
-        .shuffle()
-        .reduce((result, item, index) => {
-            if (index % 2 == 0) {
-                result.push({
-                    home: item
-                });
-            } else {
-                _.last(result).away = item;
-            }
+    items.sort(() => 0.5 - Math.random());
 
-            return result;
-        }, []);
+    const pairs = [];
+
+    while (items.length) {
+        const [home, away] = items.splice(0, 2);
+
+        pairs.push({
+            home,
+            away
+        });
+    }
+
+    return pairs;
 }
 
 module.exports = {
