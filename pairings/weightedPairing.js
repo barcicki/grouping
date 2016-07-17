@@ -1,5 +1,4 @@
-const _ = require('lodash');
-const weightedPattern = /, ?[0-9]{1,}/;
+const WEIGHTED_PATTERN = /, ?[0-9]+/;
 
 function canPair(items) {
     let anyWeighted = false;
@@ -9,11 +8,11 @@ function canPair(items) {
     }
 
     for (const item of items) {
-        if (!_.isString(item)) {
+        if (typeof item !== 'string') {
             return false;
         }
 
-        if (item.match(weightedPattern)) {
+        if (item.match(WEIGHTED_PATTERN)) {
             anyWeighted = true;
         }
     }
