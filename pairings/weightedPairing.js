@@ -37,15 +37,7 @@ function toWeightedItem(item) {
     };
 }
 
-function pair(items) {
-    if (items.length % 2 != 0) {
-        throw new Error(`Can't make pairs using odd number of players`);
-    }
-
-    const weightedItems = items
-        .map(toWeightedItem)
-        .sort(sortByWeight);
-
+function pairWeightedItems(weightedItems) {
     const orderedItems = weightedItems
         .filter(item => item.weight > 0);
 
@@ -73,9 +65,24 @@ function pair(items) {
     return pairs;
 }
 
+function pair(items) {
+    if (items.length % 2 != 0) {
+        throw new Error(`Can't make pairs using odd number of players`);
+    }
+
+    const weightedItems = items
+        .map(toWeightedItem)
+        .sort(sortByWeight);
+
+    return pairWeightedItems(weightedItems)
+}
+
 module.exports = {
     name: 'Weighted Pairing',
     priority: 2,
+    toWeightedItem,
+    sortByWeight,
+    pairWeightedItems,
     canPair,
     pair
 };

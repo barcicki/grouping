@@ -1,5 +1,5 @@
 function canPair(items) {
-    return items.every(item => typeof item === 'string');
+    return Array.isArray(items) && items.every(item => typeof item === 'string');
 }
 
 function pair(items) {
