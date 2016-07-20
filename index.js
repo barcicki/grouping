@@ -11,24 +11,17 @@ const argv = require('yargs')
 
 const yaml = require('js-yaml');
 const fs = require('fs');
-const requireDir = require('require-dir');
-const pairingMethods = requireDir('./pairings');
+const grouping = require('./grouping');
 
 if (argv.file) {
     try {
         const data = yaml.safeLoad(fs.readFileSync(argv.file, 'utf-8'));
-        const pairingMethod = Object.keys(pairingMethods)
-            .map(key => pairingMethods[key])
-            .sort((methodA, methodB) => methodB.priority - methodA.priority)
-            .find(method => method.canPair(data));
 
-        if (!pairingMethod) {
-            throw new Error('No pairing method supports this data.');
+        if (!grouping.canGroup(data)) {
+            throw new Error(`This data is not supported`);
         }
 
-        console.log(`Using ${pairingMethod.name} method:`);
-
-        const result = pairingMethod.pair(data);
+        const result = grouping.group(data);
 
         console.log(result);
     } catch (err) {
