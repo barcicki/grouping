@@ -1,15 +1,35 @@
 {
   "name": "grouping",
   "version": "1.0.0",
-  "description": "",
+  "description": "Simple tool for grouping items",
+  "keywords": [
+    "grouping",
+    "pairing",
+    "dividing into groups",
+    "shuffling"
+  ],
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Artur Barcicki <barcicki@gmail.com>",
+  "bin": {
+    "group-items": "./cli.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/barcicki/grouping.git"
+  },
+  "bugs": {
+    "url": "https://github.com/barcicki/grouping/issues",
+    "email": "barcicki@gmail.com"
+  },
   "license": "MIT",
   "dependencies": {
     "js-yaml": "^3.6.1",
     "yargs": "^4.8.0"
+  },
+  "engines": {
+    "node": ">=6.0.0"
   }
 }
