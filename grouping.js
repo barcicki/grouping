@@ -1,49 +1,81 @@
 /**
- * Checks if provided items is an array of strings or an object with all
- * properties that are arrays of strings.
+ * Checks if items can be processed by grouping.
+ *
+ * Valid items:
+ * - array of strings
+ * - array of WeightedItem (object with 'label' and 'weight' property)
+ * - object with multiple properties of on of above type
  *
  * @param {*} items
  * @returns {boolean}
  */
 function canGroup(items) {
     if (Array.isArray(items)) {
-        return isArrayOfStrings(items);
+        return isArrayOfStringsOrWeightedItems(items);
     }
 
     if (typeof items === 'object') {
         return Object
             .keys(items)
             .map(key => items[key])
-            .every(isArrayOfStrings);
+            .every(isArrayOfStringsOrWeightedItems);
     }
 
     return false;
 }
 
 /**
- * Checks if provided items is an array of strings.
+ * Checks if provided items is an array of strings or of WeightedItem (object
+ * with 'label' and 'weight' property).
  *
  * @param {*} items
  * @returns {boolean}
  */
-function isArrayOfStrings(items) {
-    return Array.isArray(items) && items.every(item => typeof item === 'string');
+function isArrayOfStringsOrWeightedItems(items) {
+    return Array.isArray(items) &&
+           items.every(item => typeof item === 'string' || isWeightedItem(item));
+}
+
+/**
+ * Checks if provided item is a WeightedItem - an object with 'label' property.
+ *
+ * @param {*} item
+ * @returns {boolean}
+ */
+function isWeightedItem(item) {
+    return typeof item === 'object' && !!item.label;
 }
 
 /**
  * Creates mapper function able to extract weight from string.
  *
  * @param {object} params - additional parameters to be included in the output
- * @returns {function(string)}
+ * @returns {function(*)}
  */
 function createToWeightedItemConverter(params = {}) {
-    return (string) => {
-        const [item, weight] = string.split(',');
+    return (item) => {
+        const weightedItem = {
+            label: null,
+            weight: 0
+        };
 
-        return Object.assign({
-            item,
-            weight: weight ? parseInt(weight, 10) : 0
-        }, params);
+        if (isWeightedItem(item)) {
+            Object.assign(weightedItem, item);
+
+        } else {
+            const comaPos = item.lastIndexOf(',');
+            const hasWeight = comaPos !== -1;
+
+            if (hasWeight) {
+                weightedItem.label = item.slice(0, comaPos);
+                weightedItem.weight = parseInt(item.slice(comaPos + 1), 10);
+
+            } else {
+                weightedItem.label = item;
+            }
+        }
+
+        return Object.assign(weightedItem, params);
     }
 }
 
@@ -120,7 +152,7 @@ function group(data, { maxGroupSize = 2, isStrict = false } = {}) {
     let groupIndex = 0;
 
     while (items.length) {
-        groups[groupIndex].push(items.shift().item);
+        groups[groupIndex].push(items.shift().label);
         groupIndex = (groupIndex + 1) % groupsCount;
     }
 
@@ -134,7 +166,7 @@ module.exports = {
 
 /**
  * @typedef {object} WeightedItem
- * @property {string} item
- * @property {number} weight
+ * @property {string} label
+ * @property {number} [weight]
  * @property {string} [basket]
  */
