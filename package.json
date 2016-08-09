@@ -1,7 +1,7 @@
 {
   "name": "grouping",
   "version": "1.0.0",
-  "description": "Simple tool for grouping items",
+  "description": "Simple library for grouping items",
   "keywords": [
     "grouping",
     "pairing",
